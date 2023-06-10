@@ -20,6 +20,7 @@ public class LoadSave {
     public static final String MAIN_MENU_BACKGROUND_SECOND = "main_menu_background_2.png";
     public static final String PAUSE_BACKGROUND = "main_menu_background.png";
     public static final String PAUSE_ELEMENTS = "pause_elements.png";
+    public static final String HEALTH = "health.png";
 
     public static final String LEVEL_BACKGROUND_COLOR = "background_color.png";
     public static final String MICROSHEME = "microsheme.png";

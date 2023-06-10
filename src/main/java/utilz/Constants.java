@@ -10,9 +10,9 @@ public class Constants {
 
         public static final int WAIT = 0;
         public static final int RUN = 1;
-        public static final int HIT = 2;
-        public static final int DEAD = 3;
-        public static final int ATTACK = 4;
+        public static final int ATTACK = 2;
+        public static final int HIT = 3;
+        public static final int DEAD = 4;
 
         public static final int ENEMY_WIDTH_DEFAULT = 64;
         public static final int ENEMY_HEIGHT_DEFAULT = 64;
@@ -32,11 +32,11 @@ public class Constants {
                         case RUN:
                             return 8;
                         case HIT:
-                            return 7;
+                            return 6;
                         case DEAD:
                             return 7;
                         case ATTACK:
-                            return 8;
+                            return 6;
                         default:
                             return 1;
                     }

@@ -35,6 +35,22 @@ public class Player extends Entity {
     private float jumpSpeed = -4.5f * GameThread.SCALE;
     private float fallSpeedAfterCollision = 1f * GameThread.SCALE;
 
+    // STATUS BAR
+    private BufferedImage statusBarImg;
+
+    private int statusBarWidth = (int) (200 * GameThread.SCALE);
+    private int statusBarHeight = (int) (100* GameThread.SCALE);
+    private int statusBarX = (int) (10 * GameThread.SCALE);
+    private int statusBarY = (int) (10 * GameThread.SCALE);
+    private int healthBarWidth = (int) (128 * GameThread.SCALE);
+    private int healthBarHeight = (int) (34 * GameThread.SCALE);
+    private int healthBarXStart = (int) (46 * GameThread.SCALE);
+    private int healthBarYStart = (int) (43 * GameThread.SCALE);
+
+    private int maxHealth = 100;
+    private int healthIndicator = maxHealth;
+    private int healthWidth = healthBarWidth;
+
     public Player(float x, float y, int width, int height) {
         super(x, y, width, height);
         setAnimations();
@@ -42,6 +58,8 @@ public class Player extends Entity {
     }
 
     public void update() {
+        updateHealthBar();
+
         updatePosition();
         setAnimation();
         startAnimation();
@@ -50,6 +68,18 @@ public class Player extends Entity {
     public void render(Graphics g, int xLvlOffset) {
         g.drawImage(animations[playerAction][animationIndex], (int) (hitBox.x - xHitBox) - xLvlOffset, (int) (hitBox.y - yHitBox), (int) width, (int) height, null);
         drawHitBox(g, xLvlOffset);
+        
+        drawUI(g);
+    }
+
+    private void drawUI(Graphics g) {
+        g.drawImage(statusBarImg, statusBarX, statusBarY, statusBarWidth, statusBarHeight, null);
+        g.setColor(new Color(183, 32, 32));
+        g.fillRect(healthBarXStart, healthBarYStart, healthWidth, healthBarHeight);
+    }
+
+    private void updateHealthBar() {
+        healthWidth = (int) ((healthIndicator / (float) maxHealth) * healthBarWidth);
     }
 
     private void setAnimations() {
@@ -61,11 +91,13 @@ public class Player extends Entity {
                 animations[i][j] = img.getSubimage(j * 64, i * 64, 64, 64);
             }
         }
+
+        statusBarImg = LoadSave.getAtlas(LoadSave.HEALTH);
     }
 
     public void loadLvlData(int[][] lvlData) {
         this.lvlData = lvlData;
-        if (!isEntityOnFloor(hitBox, lvlData)) {
+        if (!IsEntityOnFloor(hitBox, lvlData)) {
             inAir = true;
         }
     }
@@ -132,19 +164,19 @@ public class Player extends Entity {
         }
 
         if (!inAir) {
-            if (!isEntityOnFloor(hitBox, lvlData)) {
+            if (!IsEntityOnFloor(hitBox, lvlData)) {
                 inAir = true;
             }
         }
 
         if (inAir) {
-            if (canMove(hitBox.x, hitBox.y + airSpeed, hitBox.width, hitBox.height, lvlData)) {
+            if (CanMove(hitBox.x, hitBox.y + airSpeed, hitBox.width, hitBox.height, lvlData)) {
                 hitBox.y += airSpeed;
                 airSpeed += gravity;
                 updateXPosition(xSpeed);
             }
             else {
-                hitBox.y = yPosCheck(hitBox, airSpeed);
+                hitBox.y = YPosCheck(hitBox, airSpeed);
                 if (airSpeed > 0) {
                     resetInAir();
                 } else {
@@ -167,10 +199,10 @@ public class Player extends Entity {
     }
 
     private void updateXPosition(float xSpeed) {
-        if (canMove(hitBox.x + xSpeed, hitBox.y, hitBox.width, hitBox.height, lvlData)) {
+        if (CanMove(hitBox.x + xSpeed, hitBox.y, hitBox.width, hitBox.height, lvlData)) {
             hitBox.x += xSpeed;
         } else {
-            hitBox.x = xPosCheck(hitBox, xSpeed);
+            hitBox.x = XPosCheck(hitBox, xSpeed);
         }
     }
 

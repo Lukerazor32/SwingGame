@@ -25,9 +25,9 @@ public class EnemyManager {
         System.out.println("size of synths: " + synths.size());
     }
 
-    public void update(int[][] lvlData) {
+    public void update(int[][] lvlData, Player player) {
         for (Synthetron synth : synths) {
-            synth.update(lvlData);
+            synth.update(lvlData, player);
         }
     }
 

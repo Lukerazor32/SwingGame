@@ -6,13 +6,13 @@ import java.awt.geom.Rectangle2D;
 
 public class HelpMethods {
 
-    public static boolean canMove(float x, float y, float width, float height, int[][] lvlData) {
-        if (!isObject(x, y, lvlData)) {
-            if (!isObject(x + width, y + height, lvlData)) {
-                if (!isObject(x + width, y + height / GameThread.SCALE, lvlData)) {
-                    if (!isObject(x + width, y, lvlData)) {
-                        if (!isObject(x, y + height, lvlData)) {
-                            if (!isObject(x, y + height / GameThread.SCALE, lvlData)) {
+    public static boolean CanMove(float x, float y, float width, float height, int[][] lvlData) {
+        if (!IsObject(x, y, lvlData)) {
+            if (!IsObject(x + width, y + height, lvlData)) {
+                if (!IsObject(x + width, y + height / GameThread.SCALE, lvlData)) {
+                    if (!IsObject(x + width, y, lvlData)) {
+                        if (!IsObject(x, y + height, lvlData)) {
+                            if (!IsObject(x, y + height / GameThread.SCALE, lvlData)) {
                                 return true;
                             }
                         }
@@ -23,7 +23,7 @@ public class HelpMethods {
         return false;
     }
 
-    private static boolean isObject(float x, float y, int[][] lvlData) {
+    private static boolean IsObject(float x, float y, int[][] lvlData) {
         int maxWidth = lvlData[0].length * GameThread.TILES_SIZE;
         if ((x < 0 || x >= maxWidth) || (y < 0 || y >= GameThread.GAME_HEIGHT)) {
             return true;
@@ -31,9 +31,11 @@ public class HelpMethods {
 
         float xIndex = x / GameThread.TILES_SIZE;
         float yIndex = y / GameThread.TILES_SIZE;
+        return isTileObject((int) xIndex, (int) yIndex, lvlData);
+    }
 
-        int value = lvlData[(int) yIndex][(int) xIndex];
-
+    private static boolean isTileObject(int xTile, int yTile, int[][] lvlData) {
+        int value = lvlData[yTile][xTile];
         if (value < 0 || (value >= 20 && value < 24) || value == 60) {
             return true;
         }
@@ -41,7 +43,7 @@ public class HelpMethods {
         return false;
     }
 
-    public static float xPosCheck(Rectangle2D.Float hitBox, float xSpeed) {
+    public static float XPosCheck(Rectangle2D.Float hitBox, float xSpeed) {
         int currentTile = (int)(hitBox.x / GameThread.TILES_SIZE);
         int tileXPos = currentTile * GameThread.TILES_SIZE;
         if (xSpeed > 0) {
@@ -54,7 +56,7 @@ public class HelpMethods {
     }
 
 
-    public static float yPosCheck(Rectangle2D.Float hitBox, float airSpeed) {
+    public static float YPosCheck(Rectangle2D.Float hitBox, float airSpeed) {
         int currentTile = (int)(hitBox.y / GameThread.TILES_SIZE);
         int tileYPos = currentTile * GameThread.TILES_SIZE;
         if (airSpeed > 0) {
@@ -66,16 +68,43 @@ public class HelpMethods {
         }
     }
 
-    public static boolean isEntityOnFloor(Rectangle2D.Float hitBox, int[][] lvlData) {
-        if (!isObject(hitBox.x, hitBox.y + hitBox.height + 1, lvlData)) {
-            if (!isObject(hitBox.x + hitBox.width, hitBox.y + hitBox.height + 1, lvlData)) {
+    public static boolean IsEntityOnFloor(Rectangle2D.Float hitBox, int[][] lvlData) {
+        if (!IsObject(hitBox.x, hitBox.y + hitBox.height + 1, lvlData)) {
+            if (!IsObject(hitBox.x + hitBox.width, hitBox.y + hitBox.height + 1, lvlData)) {
                 return false;
             }
         }
         return true;
     }
 
-    public static boolean isFloor(Rectangle2D.Float hitBox, float xSpeed, int[][] lvlData) {
-        return isObject(hitBox.x + xSpeed, hitBox.y + hitBox.height + 1, lvlData);
+    public static boolean IsFloorLeft(Rectangle2D.Float hitBox, float xSpeed, int[][] lvlData) {
+        return IsObject(hitBox.x + xSpeed, hitBox.y + hitBox.height + 1, lvlData);
+    }
+
+    public static boolean IsFloorRight(Rectangle2D.Float hitBox, float xSpeed, int[][] lvlData) {
+        return IsObject(hitBox.x + xSpeed + hitBox.width, hitBox.y + hitBox.height + 1, lvlData);
+    }
+
+    private static boolean isAllTilesWalkable(int xStart, int xEnd, int y, int[][] lvlData) {
+        for (int i = 0; i < xEnd - xStart; i++) {
+            if (isTileObject(xStart + i, y, lvlData)) {
+                return false;
+            }
+            if (!isTileObject(xStart + i, y+1, lvlData)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean IsNotBarrier(Rectangle2D.Float enemyHitBox, Rectangle2D.Float playerHitBox, int yTile, int[][] lvlData) {
+        int enemyXTile = (int) (enemyHitBox.x / GameThread.TILES_SIZE);
+        int playerXTile = (int) (playerHitBox.x / GameThread.TILES_SIZE);
+
+        if (enemyXTile > playerXTile) {
+            return isAllTilesWalkable(playerXTile, enemyXTile, yTile, lvlData);
+        } else {
+            return isAllTilesWalkable(enemyXTile, playerXTile, yTile, lvlData);
+        }
     }
 }

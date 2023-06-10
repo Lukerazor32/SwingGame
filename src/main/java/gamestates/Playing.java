@@ -68,7 +68,7 @@ public class Playing extends State implements Statemethods {
         if (!paused) {
             levelManager.update();
             player.update();
-            enemyManager.update(levelManager.getCurrentLvl().getLvlData());
+            enemyManager.update(levelManager.getCurrentLvl().getLvlData(), player);
             closeToBorder();
         } else {
             pauseOverlay.update();
