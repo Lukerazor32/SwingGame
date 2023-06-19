@@ -189,4 +189,8 @@ public class Playing extends State implements Statemethods {
     public void disable() {
         player.disableMoving();
     }
+
+    public void resetAll() {
+
+    }
 }

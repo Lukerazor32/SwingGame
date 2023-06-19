@@ -43,6 +43,28 @@ public class Constants {
             }
             return 0;
         }
+
+        public static int getMaxHealth(int enemyType) {
+            switch (enemyType) {
+                case SYNTHETRON:
+                    return  100;
+                case OMNICORE:
+                    return 200;
+                default:
+                    return 0;
+            }
+        }
+
+        public static int getDamage(int enemyType) {
+            switch (enemyType) {
+                case SYNTHETRON:
+                    return  10;
+                case OMNICORE:
+                    return 20;
+                default:
+                    return 0;
+            }
+        }
     }
 
     public static class BackgroundElements {

@@ -2,6 +2,7 @@ package entities;
 
 import lombok.Getter;
 import main.GameThread;
+import utilz.Constants;
 import utilz.HelpMethods;
 
 import static utilz.Constants.Directions.*;
@@ -21,10 +22,15 @@ public abstract class Enemy extends Entity {
     protected int walkDir = LEFT;
     protected int tileY;
 
+    protected int maxHealth;
+    protected int healthIndicator;
+
     public Enemy(float x, float y, int width, int height, int enemyType) {
         super(x, y, width, height);
         this.enemyType = enemyType;
         initHitBox(x, y, width, height);
+        maxHealth = Constants.EnemyConstants.getMaxHealth(enemyType);
+        healthIndicator = maxHealth;
     }
 
     protected void updateAnimationTick() {

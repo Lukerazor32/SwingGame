@@ -16,9 +16,9 @@ public class LoadSave {
     public static final String BACKGROUND_ELEMENTS = "background_elements.png";
     public static final String LEVEL_ONE = "level_one_markup.png";
     public static final String MAIN_MENU_ELEMENTS = "main_menu_elements.png";
-    public static final String MAIN_MENU_BACKGROUND = "main_menu_background.png";
+    public static final String MAIN_MENU_BACKGROUND = "pause_background.png";
     public static final String MAIN_MENU_BACKGROUND_SECOND = "main_menu_background_2.png";
-    public static final String PAUSE_BACKGROUND = "main_menu_background.png";
+    public static final String PAUSE_BACKGROUND = "pause_background.png";
     public static final String PAUSE_ELEMENTS = "pause_elements.png";
     public static final String HEALTH = "health.png";
 
