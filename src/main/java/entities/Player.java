@@ -1,11 +1,13 @@
 package entities;
 
+import gamestates.GameState;
 import lombok.Getter;
 import lombok.Setter;
 import main.GameThread;
 import utilz.LoadSave;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import static utilz.HelpMethods.*;
@@ -51,25 +53,53 @@ public class Player extends Entity {
     private int healthIndicator = maxHealth;
     private int healthWidth = healthBarWidth;
 
+    //ATTACK
+    private Rectangle2D.Float attackBox;
+
     public Player(float x, float y, int width, int height) {
         super(x, y, width, height);
         setAnimations();
         initHitBox(x, y, (int)(26 * GameThread.SCALE), (int)(56 * GameThread.SCALE));
+        initAttackBox();
+    }
+
+    private void initAttackBox() {
+        attackBox = new Rectangle2D.Float(x, y, (int) (20 * GameThread.SCALE), (int) (20 * GameThread.SCALE));
     }
 
     public void update() {
         updateHealthBar();
+        updateAttackBox();
 
         updatePosition();
         setAnimation();
         startAnimation();
     }
 
+    private void updateAttackBox() {
+        if (right) {
+            attackBox.x = hitBox.x + hitBox.width + (int) (GameThread.SCALE * 10);
+
+        } else if (left) {
+            attackBox.x = hitBox.x - hitBox.width - (int) (GameThread.SCALE * 10);
+        }
+        attackBox.y = hitBox.y + (GameThread.SCALE * 10);
+    }
+
     public void render(Graphics g, int xLvlOffset) {
-        g.drawImage(animations[playerAction][animationIndex], (int) (hitBox.x - xHitBox) - xLvlOffset, (int) (hitBox.y - yHitBox), (int) width, (int) height, null);
+        g.drawImage(animations[playerAction][animationIndex],
+                (int) (hitBox.x - xHitBox) - xLvlOffset + flipX,
+                (int) (hitBox.y - yHitBox),
+                (int) width * flipW, (int) height, null);
         drawHitBox(g, xLvlOffset);
+        drawAttackBox(g, xLvlOffset);
         
         drawUI(g);
+    }
+
+    private void drawAttackBox(Graphics g, int xLvlOffset) {
+        g.setColor(Color.red);
+        g.drawRect((int) attackBox.x - xLvlOffset, (int) attackBox.y, (int) attackBox.width, (int) attackBox.height);
     }
 
     private void drawUI(Graphics g) {
@@ -158,9 +188,13 @@ public class Player extends Entity {
 
         if (left) {
             xSpeed -= playerSpeed;
+            flipX = (int) width;
+            flipW = -1;
         }
         if (right) {
             xSpeed += playerSpeed;
+            flipX = 0;
+            flipW = 1;
         }
 
         if (!inAir) {
@@ -188,6 +222,15 @@ public class Player extends Entity {
             updateXPosition(xSpeed);
         }
         playerMove = true;
+    }
+
+    public void changeHealth(int value) {
+        healthIndicator += value;
+        if (healthIndicator <= 0) {
+            healthIndicator = 0;
+        } else if (healthIndicator >= maxHealth) {
+            healthIndicator = maxHealth;
+        }
     }
 
     private void jump() {

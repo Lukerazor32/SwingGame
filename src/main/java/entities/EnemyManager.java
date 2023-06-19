@@ -38,9 +38,10 @@ public class EnemyManager {
     private void drawSynths(Graphics g, int xLevelOffset) {
         for (Synthetron synth : synths) {
             g.drawImage(synthArr[synth.getEnemyState()][synth.getAnimationIndex()],
-                    (int) synth.getHitBox().x - ENEMY_DRAWOFFSET_X - xLevelOffset, (int) synth.getHitBox().y - ENEMY_DRAWOFFSET_Y,
-                    ENEMY_WIDTH, ENEMY_HEIGHT, null);
+                    (int) synth.getHitBox().x - ENEMY_DRAWOFFSET_X - xLevelOffset + synth.flipX, (int) synth.getHitBox().y - ENEMY_DRAWOFFSET_Y,
+                    ENEMY_WIDTH * synth.flipW, ENEMY_HEIGHT, null);
             synth.drawHitBox(g, xLevelOffset);
+            synth.drawAttackBox(g, xLevelOffset);
         }
     }
 

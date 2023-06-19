@@ -64,6 +64,8 @@ public abstract class Enemy extends Entity {
         float xSpeed = 0;
 
         if (walkDir == LEFT) {
+            flipX = (int) width;
+            flipW = -1;
             xSpeed = -enemySpeed;
             if (CanMove(hitBox.x + xSpeed, hitBox.y, hitBox.width, hitBox.height, lvlData)) {
                 if (IsFloorLeft(hitBox, xSpeed, lvlData)) {
@@ -72,6 +74,8 @@ public abstract class Enemy extends Entity {
                 }
             }
         } else {
+            flipX = 0;
+            flipW = 1;
             xSpeed = enemySpeed;
             if (CanMove(hitBox.x + xSpeed, hitBox.y, hitBox.width, hitBox.height, lvlData)) {
                 if (IsFloorRight(hitBox, xSpeed, lvlData)) {

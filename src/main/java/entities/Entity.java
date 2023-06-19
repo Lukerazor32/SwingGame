@@ -13,6 +13,9 @@ public abstract class Entity {
     @Getter
     protected Rectangle2D.Float hitBox;
 
+    protected int flipX = 0;
+    protected int flipW = 1;
+
     public Entity(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
