@@ -3,7 +3,6 @@ package ui;
 import gamestates.GameState;
 import gamestates.Playing;
 import main.GameThread;
-import utilz.Constants;
 import utilz.LoadSave;
 
 import java.awt.*;
@@ -12,40 +11,38 @@ import java.awt.image.BufferedImage;
 
 import static utilz.Constants.UI.UrmButtons.URM_SIZE;
 
-public class PauseOverlay {
+public class Success {
     private BufferedImage background;
     private int bgX, bgY, bgW, bgH;
-    private UrmButton menuB, replayB, unpauseB;
+    private UrmButton menuB, unpauseB;
     private Playing playing;
 
-    public PauseOverlay(Playing playing) {
+    public Success(Playing playing) {
         this.playing = playing;
         loadImgs();
         createUrmButtons();
     }
 
-    private void createUrmButtons() {
-        int menuX = (int) (444 * GameThread.SCALE);
-        int replayX = (int) (592 * GameThread.SCALE);
-        int unpauseX = (int) (740 * GameThread.SCALE);
-        int bY = (int) (580 * GameThread.SCALE);
-
-        menuB = new UrmButton(menuX, bY, URM_SIZE, URM_SIZE, 2);
-        replayB = new UrmButton(replayX, bY, URM_SIZE, URM_SIZE, 1);
-        unpauseB = new UrmButton(unpauseX, bY, URM_SIZE, URM_SIZE, 0);
-    }
-
     private void loadImgs() {
-        background = LoadSave.getAtlas(LoadSave.PAUSE_BACKGROUND);
+        background = LoadSave.getAtlas(LoadSave.SUCCESS_BACKGROUND);
+
         bgW = (int) (background.getWidth() * GameThread.SCALE);
         bgH = (int) (background.getHeight() * GameThread.SCALE);
         bgX = GameThread.GAME_WIDTH / 2 - bgW / 2;
-        bgY = (int) (15 * GameThread.SCALE);
+        bgY = (int) (100 * GameThread.SCALE);
+    }
+
+    private void createUrmButtons() {
+        int menuX = (int) (494 * GameThread.SCALE);
+        int unpauseX = (int) (690 * GameThread.SCALE);
+        int bY = (int) (450 * GameThread.SCALE);
+
+        menuB = new UrmButton(menuX, bY, URM_SIZE, URM_SIZE, 2);
+        unpauseB = new UrmButton(unpauseX, bY, URM_SIZE, URM_SIZE, 0);
     }
 
     public void update() {
         menuB.update();
-        replayB.update();
         unpauseB.update();
     }
 
@@ -53,7 +50,6 @@ public class PauseOverlay {
         g.drawImage(background, bgX, bgY, bgW, bgH, null);
 
         menuB.draw(g);
-        replayB.draw(g);
         unpauseB.draw(g);
     }
 
@@ -68,8 +64,6 @@ public class PauseOverlay {
     public void mousePressed(MouseEvent e) {
         if (hover(e, menuB)) {
             menuB.setMousePressed(true);
-        } else if (hover(e, replayB)) {
-            replayB.setMousePressed(true);
         } else if (hover(e, unpauseB)) {
             unpauseB.setMousePressed(true);
         }
@@ -80,11 +74,6 @@ public class PauseOverlay {
             if (menuB.isMousePressed()) {
                 GameState.state = GameState.MENU;
             }
-        } else if (hover(e, replayB)) {
-            if (replayB.isMousePressed()) {
-                playing.resetAll();
-                playing.unpauseGame();
-            }
         } else if (hover(e, unpauseB)) {
             if (unpauseB.isMousePressed()) {
                 playing.unpauseGame();
@@ -92,19 +81,15 @@ public class PauseOverlay {
         }
 
         menuB.resetBools();
-        replayB.resetBools();
         unpauseB.resetBools();
     }
 
     public void mouseMoved(MouseEvent e) {
         menuB.setMouseOver(false);
-        replayB.setMouseOver(false);
         unpauseB.setMouseOver(false);
 
         if (hover(e, menuB)) {
             menuB.setMouseOver(true);
-        } else if (hover(e, replayB)) {
-            replayB.setMouseOver(true);
         } else if (hover(e, unpauseB)) {
             unpauseB.setMouseOver(true);
         }

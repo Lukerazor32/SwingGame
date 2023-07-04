@@ -14,13 +14,15 @@ import java.util.ArrayList;
 public class LoadSave {
     public static final String PLAYER_ANIM = "player.png";
     public static final String BACKGROUND_ELEMENTS = "background_elements.png";
-    public static final String LEVEL_ONE = "level_one_markup.png";
+    public static final String LEVEL_ONE = "level_1.png";
+    public static final String LEVEL_TWO = "level_2.png";
     public static final String MAIN_MENU_ELEMENTS = "main_menu_elements.png";
     public static final String MAIN_MENU_BACKGROUND = "pause_background.png";
     public static final String MAIN_MENU_BACKGROUND_SECOND = "main_menu_background_2.png";
     public static final String PAUSE_BACKGROUND = "pause_background.png";
     public static final String PAUSE_ELEMENTS = "pause_elements.png";
     public static final String HEALTH = "health.png";
+    public static final String SUCCESS_BACKGROUND = "success_background.png";
 
     public static final String LEVEL_BACKGROUND_COLOR = "background_color.png";
     public static final String MICROSHEME = "microsheme.png";

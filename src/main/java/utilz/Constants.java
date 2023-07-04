@@ -47,7 +47,7 @@ public class Constants {
         public static int getMaxHealth(int enemyType) {
             switch (enemyType) {
                 case SYNTHETRON:
-                    return  100;
+                    return  10;
                 case OMNICORE:
                     return 200;
                 default:

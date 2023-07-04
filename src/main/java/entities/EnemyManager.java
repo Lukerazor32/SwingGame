@@ -2,9 +2,11 @@ package entities;
 
 import static utilz.Constants.EnemyConstants.*;
 import gamestates.Playing;
+import lombok.Getter;
 import utilz.LoadSave;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -12,7 +14,8 @@ public class EnemyManager {
     private Playing playing;
     private BufferedImage[][] synthArr;
 
-    private ArrayList<Synthetron> synths = new ArrayList<>();
+    @Getter
+    public ArrayList<Synthetron> synths = new ArrayList<>();
 
     public EnemyManager(Playing playing) {
         this.playing = playing;
@@ -27,7 +30,9 @@ public class EnemyManager {
 
     public void update(int[][] lvlData, Player player) {
         for (Synthetron synth : synths) {
-            synth.update(lvlData, player);
+            if (synth.active) {
+                synth.update(lvlData, player);
+            }
         }
     }
 
@@ -35,13 +40,26 @@ public class EnemyManager {
         drawSynths(g, xLevelOffset);
     }
 
+    public void checkEnemyHit(Rectangle2D.Float attackBox) {
+        for(Synthetron synth : synths) {
+            if (synth.active) {
+                if (attackBox.intersects(synth.getHitBox())) {
+                    synth.hit(10);
+                    return;
+                }
+            }
+        }
+    }
+
     private void drawSynths(Graphics g, int xLevelOffset) {
         for (Synthetron synth : synths) {
-            g.drawImage(synthArr[synth.getEnemyState()][synth.getAnimationIndex()],
-                    (int) synth.getHitBox().x - ENEMY_DRAWOFFSET_X - xLevelOffset + synth.flipX, (int) synth.getHitBox().y - ENEMY_DRAWOFFSET_Y,
-                    ENEMY_WIDTH * synth.flipW, ENEMY_HEIGHT, null);
-            synth.drawHitBox(g, xLevelOffset);
-            synth.drawAttackBox(g, xLevelOffset);
+            if (synth.active) {
+                g.drawImage(synthArr[synth.getEnemyState()][synth.getAnimationIndex()],
+                        (int) synth.getHitBox().x - ENEMY_DRAWOFFSET_X - xLevelOffset + synth.flipX, (int) synth.getHitBox().y - ENEMY_DRAWOFFSET_Y,
+                        ENEMY_WIDTH * synth.flipW, ENEMY_HEIGHT, null);
+                synth.drawHitBox(g, xLevelOffset);
+                synth.drawAttackBox(g, xLevelOffset);
+            }
         }
     }
 
@@ -52,6 +70,12 @@ public class EnemyManager {
             for (int i = 0; i < synthArr[j].length; i++) {
                 synthArr[j][i] = temp.getSubimage(i * ENEMY_WIDTH_DEFAULT, j * ENEMY_HEIGHT_DEFAULT, ENEMY_WIDTH_DEFAULT, ENEMY_HEIGHT_DEFAULT);
             }
+        }
+    }
+
+    public void resetAll() {
+        for (Synthetron synth : synths) {
+            synth.resetEnemy();
         }
     }
 }

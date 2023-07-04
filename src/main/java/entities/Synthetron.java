@@ -50,11 +50,20 @@ public class Synthetron extends Enemy {
                 case RUN:
                     if (canSeePlayer(lvlData, player)) {
                         turnTowardsPlayer(player);
-                    }
-                    if (isPlayerCloseForAttack(player)) {
-                        newState(ATTACK);
+                        if (isPlayerCloseForAttack(player)) {
+                            newState(ATTACK);
+                            return;
+                        }
                     }
                     move(lvlData);
+                    break;
+                case ATTACK:
+                    if (animationIndex == 0) {
+                        attackChecked = false;
+                    }
+                    if (animationIndex == 2 && !attackChecked) {
+                        checkEnemyHit(attackBox, player);
+                    }
                     break;
             }
         }

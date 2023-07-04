@@ -1,8 +1,12 @@
 package utilz;
 
+import entities.EnemyManager;
+import entities.Entity;
+import entities.Synthetron;
 import main.GameThread;
 
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 public class HelpMethods {
 

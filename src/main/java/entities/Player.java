@@ -1,6 +1,6 @@
 package entities;
 
-import gamestates.GameState;
+import gamestates.Playing;
 import lombok.Getter;
 import lombok.Setter;
 import main.GameThread;
@@ -9,6 +9,7 @@ import utilz.LoadSave;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import static utilz.HelpMethods.*;
 import static utilz.Constants.PlayerState.*;
@@ -56,24 +57,45 @@ public class Player extends Entity {
     //ATTACK
     private Rectangle2D.Float attackBox;
 
-    public Player(float x, float y, int width, int height) {
+    private Playing playing;
+
+    public Player(float x, float y, int width, int height, Playing playing) {
         super(x, y, width, height);
         setAnimations();
         initHitBox(x, y, (int)(26 * GameThread.SCALE), (int)(56 * GameThread.SCALE));
         initAttackBox();
+
+        this.playing = playing;
     }
 
     private void initAttackBox() {
-        attackBox = new Rectangle2D.Float(x, y, (int) (20 * GameThread.SCALE), (int) (20 * GameThread.SCALE));
+        attackBox = new Rectangle2D.Float(hitBox.x + hitBox.width + (int) (GameThread.SCALE * 10),
+                hitBox.y + (int) (GameThread.SCALE * 10),
+                (int) (20 * GameThread.SCALE), (int) (20 * GameThread.SCALE));
     }
 
     public void update() {
         updateHealthBar();
-        updateAttackBox();
 
+        if (healthIndicator <= 0) {
+            playing.setGameOver(true);
+            return;
+        }
+        updateAttackBox();
         updatePosition();
+        if (attack) {
+            checkAttack();
+        }
         setAnimation();
-        startAnimation();
+        playAnimation();
+    }
+
+    private void checkAttack() {
+        if (attackChecked || animationIndex != 1) {
+            return;
+        }
+        attackChecked = true;
+        playing.checkEnemyHit(attackBox);
     }
 
     private void updateAttackBox() {
@@ -103,9 +125,11 @@ public class Player extends Entity {
     }
 
     private void drawUI(Graphics g) {
-        g.drawImage(statusBarImg, statusBarX, statusBarY, statusBarWidth, statusBarHeight, null);
+        g.setColor(new Color(88, 15, 214));
+        g.fillRect(healthBarXStart, healthBarYStart, 128, healthBarHeight);
         g.setColor(new Color(183, 32, 32));
         g.fillRect(healthBarXStart, healthBarYStart, healthWidth, healthBarHeight);
+        g.drawImage(statusBarImg, statusBarX, statusBarY, statusBarWidth, statusBarHeight, null);
     }
 
     private void updateHealthBar() {
@@ -132,7 +156,7 @@ public class Player extends Entity {
         }
     }
 
-    private void startAnimation() {
+    private void playAnimation() {
         animationTick++;
         if (animationTick == animationSpeed) {
             animationTick = 0;
@@ -140,6 +164,7 @@ public class Player extends Entity {
             if (animationIndex >= getSpriteWidth(playerAction)) {
                 animationIndex = 0;
                 attack = false;
+                attackChecked = false;
             }
         }
     }
@@ -260,5 +285,22 @@ public class Player extends Entity {
         right = false;
         left = false;
         jump = false;
+    }
+
+    public void resetAll() {
+        disableMoving();
+        resetInAir();
+        attack = false;
+        playerMove = false;
+        playerAction = WAIT;
+        healthIndicator = maxHealth;
+
+        hitBox.x = x;
+        hitBox.y = y;
+        initAttackBox();
+
+        if (!IsEntityOnFloor(hitBox, lvlData)) {
+            inAir = true;
+        }
     }
 }

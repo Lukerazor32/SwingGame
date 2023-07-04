@@ -5,6 +5,9 @@ import main.GameThread;
 import utilz.Constants;
 import utilz.HelpMethods;
 
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+
 import static utilz.Constants.Directions.*;
 import static utilz.Constants.EnemyConstants.*;
 import static utilz.HelpMethods.*;
@@ -24,6 +27,8 @@ public abstract class Enemy extends Entity {
 
     protected int maxHealth;
     protected int healthIndicator;
+    @Getter
+    protected boolean active = true;
 
     public Enemy(float x, float y, int width, int height, int enemyType) {
         super(x, y, width, height);
@@ -40,8 +45,15 @@ public abstract class Enemy extends Entity {
             animationIndex++;
             if (animationIndex >= getSpriteAmount(enemyType, enemyState)) {
                 animationIndex = 0;
-                if (enemyState == ATTACK) {
-                    enemyState = WAIT;
+                switch (enemyState) {
+                    case ATTACK:
+                    case HIT:
+                        enemyState = WAIT;
+                        break;
+                    case DEAD:
+                        active = false;
+                        break;
+                    default: break;
                 }
             }
         }
@@ -94,6 +106,13 @@ public abstract class Enemy extends Entity {
         changeWalkDir();
     }
 
+    protected void checkEnemyHit(Rectangle2D.Float attackBox, Player player) {
+        if (attackBox.intersects(player.hitBox)) {
+            player.changeHealth(-getDamage(enemyType));
+        }
+        attackChecked = true;
+    }
+
     protected boolean canSeePlayer(int[][] lvlData, Player player) {
         int playerTileY = (int) (player.hitBox.y / GameThread.TILES_SIZE);
 
@@ -114,11 +133,16 @@ public abstract class Enemy extends Entity {
     protected boolean isPlayerInRange(Player player) {
         int absValue = (int) Math.abs(player.hitBox.x - hitBox.x);
 
-        return absValue <= GameThread.TILES_SIZE * 5;
+        return absValue <= GameThread.TILES_SIZE * 5f;
     }
 
     protected boolean isPlayerCloseForAttack(Player player) {
-        int absValue = (int) Math.abs(player.hitBox.x - hitBox.x);
+        int absValue;
+        if (walkDir == LEFT) {
+            absValue = (int) Math.abs((player.hitBox.x - 38) - hitBox.x);
+        } else {
+            absValue = (int) Math.abs((player.hitBox.x) - hitBox.x);
+        }
 
         return absValue <= GameThread.TILES_SIZE;
     }
@@ -135,5 +159,24 @@ public abstract class Enemy extends Entity {
         } else {
             walkDir = LEFT;
         }
+    }
+
+    protected void hit(int amount) {
+        healthIndicator -= amount;
+        if (healthIndicator <= 0) {
+            newState(DEAD);
+        } else {
+            newState(HIT);
+        }
+    }
+
+    public void resetEnemy() {
+        healthIndicator = maxHealth;
+        hitBox.x = x;
+        hitBox.y = y;
+        firstUpdate = true;
+        newState(WAIT);
+        active = true;
+        fallSpeed = 0;
     }
 }

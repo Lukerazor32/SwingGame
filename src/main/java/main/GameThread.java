@@ -37,6 +37,7 @@ public class GameThread implements Runnable {
 
         gamePanel = new GamePanel(this);
         gameWindow = new GameWindow(gamePanel);
+        gamePanel.setFocusable(true);
         System.out.println(GAME_WIDTH + " " + GAME_HEIGHT);
 
         gameLoop();

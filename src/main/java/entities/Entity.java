@@ -16,6 +16,8 @@ public abstract class Entity {
     protected int flipX = 0;
     protected int flipW = 1;
 
+    protected boolean attackChecked;
+
     public Entity(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
