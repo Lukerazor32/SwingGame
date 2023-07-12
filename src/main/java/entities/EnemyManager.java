@@ -2,6 +2,7 @@ package entities;
 
 import static utilz.Constants.EnemyConstants.*;
 import gamestates.Playing;
+import levels.Level;
 import lombok.Getter;
 import utilz.LoadSave;
 
@@ -20,24 +21,28 @@ public class EnemyManager {
     public EnemyManager(Playing playing) {
         this.playing = playing;
         loadEnemyImgs();
-        addEnemies();
     }
 
-    private void addEnemies() {
-        synths = LoadSave.getSynths();
+    public void loadEnemies(Level level) {
+        synths = level.getSynths();
         System.out.println("size of synths: " + synths.size());
     }
 
     public void update(int[][] lvlData, Player player) {
+        boolean isAnyActive = false;
         for (Synthetron synth : synths) {
             if (synth.active) {
                 synth.update(lvlData, player);
+                isAnyActive = true;
             }
+        }
+        if (!isAnyActive) {
+            playing.setSuccess(true);
         }
     }
 
-    public void draw(Graphics g, int xLevelOffset) {
-        drawSynths(g, xLevelOffset);
+    public void draw(Graphics g, int xLevelOffset, int yLvlOffset) {
+        drawSynths(g, xLevelOffset, yLvlOffset);
     }
 
     public void checkEnemyHit(Rectangle2D.Float attackBox) {
@@ -51,14 +56,14 @@ public class EnemyManager {
         }
     }
 
-    private void drawSynths(Graphics g, int xLevelOffset) {
+    private void drawSynths(Graphics g, int xLvlOffset, int yLvlOffset) {
         for (Synthetron synth : synths) {
             if (synth.active) {
-                g.drawImage(synthArr[synth.getEnemyState()][synth.getAnimationIndex()],
-                        (int) synth.getHitBox().x - ENEMY_DRAWOFFSET_X - xLevelOffset + synth.flipX, (int) synth.getHitBox().y - ENEMY_DRAWOFFSET_Y,
+                g.drawImage(synthArr[synth.state][synth.animationIndex],
+                        (int) synth.getHitBox().x - ENEMY_DRAWOFFSET_X - xLvlOffset + synth.flipX, (int) synth.getHitBox().y - ENEMY_DRAWOFFSET_Y - yLvlOffset,
                         ENEMY_WIDTH * synth.flipW, ENEMY_HEIGHT, null);
-                synth.drawHitBox(g, xLevelOffset);
-                synth.drawAttackBox(g, xLevelOffset);
+//                synth.drawHitBox(g, xLvlOffset, yLvlOffset);
+//                synth.drawAttackBox(g, xLvlOffset, yLvlOffset);
             }
         }
     }

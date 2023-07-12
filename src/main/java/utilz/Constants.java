@@ -3,6 +3,8 @@ package utilz;
 import main.GameThread;
 
 public class Constants {
+    public static final float GRAVITY = 0.08f * GameThread.SCALE;
+    public static final int ANIMATIONSPEED = 10;
 
     public static class EnemyConstants {
         public static final int SYNTHETRON = 0;
@@ -67,9 +69,31 @@ public class Constants {
         }
     }
 
+    public static class ObjectConstants {
+        public static final int EXP_VALUE = 0;
+
+        public static final int EXP_WIDTH = (int) (GameThread.SCALE * 64);
+        public static final int EXP_HEIGHT = (int) (GameThread.SCALE * 64);
+
+        public static int getSpriteAmount(int objType) {
+            switch (objType) {
+                case EXP_VALUE:
+                    return 6;
+                default:
+                    return 6;
+            }
+        }
+    }
+
     public static class BackgroundElements {
         public static final int MICROSHEME_WIDTH = (int) (300 * GameThread.SCALE);
         public static final int MICROSHEME_HEIGHT = (int) (300 * GameThread.SCALE);
+
+        public static final int BUILDING_WIDTH = (int) (350 * GameThread.SCALE);
+        public static final int BUILDING_HEIGHT = (int) (600 * GameThread.SCALE);
+
+        public static final int BUILDING_TWO_WIDTH = (int) (600 * GameThread.SCALE);
+        public static final int BUILDING_TWO_HEIGHT = (int) (400 * GameThread.SCALE);
     }
 
     public static class UI {
@@ -88,18 +112,17 @@ public class Constants {
     }
 
     public static class Directions {
-        public static final int UP = 0;
-        public static final int DOWN = 1;
         public static final int RIGHT = 2;
         public static final int LEFT = 3;
     }
 
     public static class PlayerState {
         public static final int WAIT = 0;
-        public static final int RUN = 1;
-        public static final int JUMP = 2;
-        public static final int FALLING = 3;
-        public static final int HIT = 4;
+        public static final int WALK = 1;
+        public static final int RUN = 2;
+        public static final int JUMP = 3;
+        public static final int FALLING = 4;
+        public static final int HIT = 5;
         public static final int ATTACK = 6;
         public static final int ATTACK_JUMP = 7;
 
@@ -107,16 +130,18 @@ public class Constants {
             switch (action) {
                 case WAIT:
                     return 5;
+                case WALK:
+                    return 4;
                 case RUN:
-                    return 7;
+                    return 4;
                 case JUMP:
                     return 4;
                 case FALLING:
-                    return 4;
+                    return 1;
                 case HIT:
                     return 7;
                 case ATTACK:
-                    return 8;
+                    return 6;
                 case ATTACK_JUMP:
                     return 7;
                 default:

@@ -10,13 +10,11 @@ import static utilz.Constants.EnemyConstants.*;
 import static utilz.HelpMethods.*;
 
 public class Synthetron extends Enemy {
-    //ATTACK
-    private Rectangle2D.Float attackBox;
     private int attackBoxOffsetX;
 
     public Synthetron(float x, float y) {
         super(x, y, ENEMY_WIDTH, ENEMY_HEIGHT, SYNTHETRON);
-        initHitBox(x, y, (int) (45 * GameThread.SCALE), (int) (45 * GameThread.SCALE));
+        initHitBox(45, 45);
         initAttackBox();
     }
 
@@ -43,7 +41,7 @@ public class Synthetron extends Enemy {
         if (inAir) {
             inAirUpdate(lvlData);
         } else {
-            switch (enemyState) {
+            switch (state) {
                 case WAIT:
                     newState(RUN);
                     break;
@@ -67,10 +65,5 @@ public class Synthetron extends Enemy {
                     break;
             }
         }
-    }
-
-    public void drawAttackBox(Graphics g, int xLvlOffset) {
-        g.setColor(Color.red);
-        g.drawRect((int) attackBox.x - xLvlOffset, (int) attackBox.y, (int) attackBox.width, (int) attackBox.height);
     }
 }

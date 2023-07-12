@@ -18,24 +18,24 @@ public class Menu extends State implements Statemethods {
 
     public Menu(GameThread gameThread) {
         super(gameThread);
-        loadButtons();
         loadBackground();
+        loadButtons();
     }
 
     private void loadButtons() {
-        buttons[0] = new MenuButton(GameThread.GAME_WIDTH / 2, (int) (145 * GameThread.SCALE), 0, GameState.PLAYING);
-        buttons[1] = new MenuButton(GameThread.GAME_WIDTH / 2, (int) (305 * GameThread.SCALE), 1, GameState.OPTIONS);
-        buttons[2] = new MenuButton(GameThread.GAME_WIDTH / 2, (int) (465 * GameThread.SCALE), 2, GameState.QUIT);
+        buttons[0] = new MenuButton(GameThread.GAME_WIDTH / 2, (int) ((10f / 100f) * (float) menuHeight), 0, GameState.PLAYING);
+        buttons[1] = new MenuButton(GameThread.GAME_WIDTH / 2, (int) ((40f / 100f) * (float) menuHeight), 1, GameState.OPTIONS);
+        buttons[2] = new MenuButton(GameThread.GAME_WIDTH / 2, (int) ((70f / 100f) * (float) menuHeight), 2, GameState.QUIT);
     }
 
     private void loadBackground() {
         background = LoadSave.getAtlas(LoadSave.MAIN_MENU_BACKGROUND);
         background_second = LoadSave.getAtlas(LoadSave.MAIN_MENU_BACKGROUND_SECOND);
-        menuWidth = (int) (background.getWidth() * GameThread.SCALE);
-        menuHeight= (int) (background.getHeight() * GameThread.SCALE);
+        menuWidth = (int) ((50f / 100f) * (float) GameThread.GAME_WIDTH);
+        menuHeight= (int) ((95f / 100f) * (float) GameThread.GAME_HEIGHT);
 
         xPos = GameThread.GAME_WIDTH / 2 - menuWidth / 2;
-        yPos = (int) (12 * GameThread.SCALE);
+        yPos = GameThread.GAME_HEIGHT / 2 - menuHeight / 2;
     }
 
     @Override

@@ -25,9 +25,9 @@ public class GameThread implements Runnable {
     private Menu menu;
 
     public final static int TILES_DEFAULT = 64;
-    public final static float SCALE = 1.0f;
-    public final static int TILES_IN_WIDTH = 20;
-    public final static int TILES_IN_HEIGHT = 12;
+    public final static float SCALE = 1.5f;
+    public final static int TILES_IN_WIDTH = 15;
+    public final static int TILES_IN_HEIGHT = 9;
     public final static int TILES_SIZE = (int) (TILES_DEFAULT * SCALE);
     public final static int GAME_WIDTH = TILES_SIZE * TILES_IN_WIDTH;
     public final static int GAME_HEIGHT = TILES_SIZE * TILES_IN_HEIGHT;

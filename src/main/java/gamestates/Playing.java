@@ -19,13 +19,14 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import static main.GameThread.SCALE;
-import static utilz.Constants.BackgroundElements.MICROSHEME_HEIGHT;
-import static utilz.Constants.BackgroundElements.MICROSHEME_WIDTH;
+import static utilz.Constants.BackgroundElements.*;
+import static utilz.LoadSave.*;
 
 public class Playing extends State implements Statemethods {
     @Getter
     private Player player;
     private LevelManager levelManager;
+    @Getter
     private EnemyManager enemyManager;
     private PauseOverlay pauseOverlay;
     private Success success;
@@ -33,18 +34,26 @@ public class Playing extends State implements Statemethods {
     @Setter
     private boolean isGameOver;
     private GameOver gameOver;
-    private boolean isSuccess = true;
+    @Setter
+    private boolean isSuccess;
 
     private int xLvlOffset;
-    private int leftBorder = (int) (0.2 * GameThread.GAME_WIDTH);
-    private int rightBorder = (int) (0.8 * GameThread.GAME_WIDTH);
-    private int lvlTilesWide = LoadSave.getLevelData()[0].length;
-    private int maxTilesOffset = lvlTilesWide - GameThread.TILES_IN_WIDTH;
-    private int maxLvlOffsetX = maxTilesOffset * GameThread.TILES_SIZE;
+    private int yLvlOffset;
+    private int upBorder = (int) (0.4 * GameThread.GAME_HEIGHT);
+    private int bottomBorder = (int) (0.6 * GameThread.GAME_HEIGHT);
+    private int leftBorder = (int) (0.4 * GameThread.GAME_WIDTH);
+    private int rightBorder = (int) (0.6 * GameThread.GAME_WIDTH);
+    @Setter
+    private int maxLvlOffsetX;
+    @Setter
+    private int maxLvlOffsetY;
 
+    //BACKGROUND
     private BufferedImage backgroundColor;
-    private BufferedImage microsheme;
-    private BufferedImage microsheme_two;
+    private BufferedImage building;
+    private BufferedImage building_two;
+    private BufferedImage building_three;
+    private BufferedImage moon;
 
     private int[] microshemePos;
     private Random random;
@@ -52,18 +61,38 @@ public class Playing extends State implements Statemethods {
     public Playing(GameThread gameThread) {
         super(gameThread);
         initClasses();
+        calcLvlOffSet();
+        loadStartLevel();
+    }
+
+    public void loadNextLevel() {
+        resetAll();
+        levelManager.loadNextLevel();
+        player.setSpawn(levelManager.getCurrentLevel().getPlayerSpawn());
+    }
+
+    private void loadStartLevel() {
+        enemyManager.loadEnemies(levelManager.getCurrentLevel());
+    }
+
+    private void calcLvlOffSet() {
+        maxLvlOffsetX = levelManager.getCurrentLevel().getMaxLvlOffsetX();
+        maxLvlOffsetY = levelManager.getCurrentLevel().getMaxLvlOffsetY();
     }
 
     private void initClasses() {
         levelManager = new LevelManager(gameThread);
         enemyManager = new EnemyManager(this);
-        player = new Player(200, 100, 64 * (int) SCALE, 64 * (int) SCALE, this);
-        player.loadLvlData(levelManager.getCurrentLvl().getLvlData());
+        player = new Player(200, 100, (int) (64 * SCALE), (int) (64 * SCALE), this);
+        player.loadLvlData(levelManager.getCurrentLevel().getLvlData());
+        player.setSpawn(levelManager.getCurrentLevel().getPlayerSpawn());
         pauseOverlay = new PauseOverlay(this);
 
-        backgroundColor = LoadSave.getAtlas(LoadSave.LEVEL_BACKGROUND_COLOR);
-        microsheme = LoadSave.getAtlas(LoadSave.MICROSHEME);
-        microsheme_two = LoadSave.getAtlas(LoadSave.MICROSHEME_TWO);
+        backgroundColor = LoadSave.getAtlas(LEVEL_BACKGROUND_COLOR);
+        building = LoadSave.getAtlas(BUILDING);
+        building_two = LoadSave.getAtlas(BUILDING_TWO);
+        building_three = LoadSave.getAtlas(BUILDING_THREE);
+        moon = LoadSave.getAtlas(MOON);
 
         microshemePos = new int[10];
         random = new Random();
@@ -84,20 +113,22 @@ public class Playing extends State implements Statemethods {
         } else if (!isGameOver) {
             levelManager.update();
             player.update();
-            enemyManager.update(levelManager.getCurrentLvl().getLvlData(), player);
+            enemyManager.update(levelManager.getCurrentLevel().getLvlData(), player);
             closeToBorder();
         }
     }
 
     private void closeToBorder() {
         int playerX = (int) player.getHitBox().x;
-        int diff = playerX - xLvlOffset;
+        int playerY = (int) player.getHitBox().y;
+        int diffX = playerX - xLvlOffset;
+        int diffY = playerY - yLvlOffset;
 
-        if (diff > rightBorder) {
-            xLvlOffset += diff - rightBorder;
+        if (diffX > rightBorder) {
+            xLvlOffset += diffX - rightBorder;
         }
-        else if (diff < leftBorder){
-            xLvlOffset += diff - leftBorder;
+        else if (diffX < leftBorder){
+            xLvlOffset += diffX - leftBorder;
         }
 
         if (xLvlOffset > maxLvlOffsetX) {
@@ -106,23 +137,40 @@ public class Playing extends State implements Statemethods {
         else if (xLvlOffset < 0) {
             xLvlOffset = 0;
         }
+
+
+        if (diffY > bottomBorder) {
+            yLvlOffset += diffY - bottomBorder;
+        }
+        else if (diffY < upBorder){
+            yLvlOffset += diffY - upBorder;
+        }
+
+        if (yLvlOffset > maxLvlOffsetY) {
+            yLvlOffset = maxLvlOffsetY;
+        }
+        else if (yLvlOffset < 0) {
+            yLvlOffset = 0;
+        }
     }
 
     @Override
     public void draw(Graphics g) {
         g.drawImage(backgroundColor, 0, 0, GameThread.GAME_WIDTH, GameThread.GAME_HEIGHT, null);
+        g.drawImage(moon, GameThread.GAME_WIDTH - (int) (xLvlOffset * 0.9f), ((int) (150 * SCALE) - (int) (yLvlOffset * 0.9)), (int) (500 * SCALE), (int) (350 * SCALE), null);
 
         for (int i = 0; i < microshemePos.length; i++) {
+            g.drawImage(building_two, BUILDING_TWO_WIDTH * i - (int) (xLvlOffset * 0.7), (int) (150 * SCALE) - (int) (yLvlOffset * 0.9), BUILDING_TWO_WIDTH, BUILDING_TWO_HEIGHT, null);
             if (i % 2 == 0) {
-                g.drawImage(microsheme_two, MICROSHEME_WIDTH * i - (int) (xLvlOffset * 0.7), microshemePos[i], MICROSHEME_WIDTH, MICROSHEME_HEIGHT, null);
+                g.drawImage(building, BUILDING_WIDTH * i - (int) (xLvlOffset * 0.9), (int) (40 * SCALE) - (int) (yLvlOffset * 0.9), BUILDING_WIDTH, BUILDING_HEIGHT, null);
             } else {
-                g.drawImage(microsheme, MICROSHEME_WIDTH * i - (int) (xLvlOffset * 0.7), microshemePos[i], MICROSHEME_WIDTH, MICROSHEME_HEIGHT, null);
+                g.drawImage(building_three, BUILDING_WIDTH * i - (int) (xLvlOffset * 0.9), (int) (40 * SCALE) - (int) (yLvlOffset * 0.9), BUILDING_WIDTH, BUILDING_HEIGHT, null);
             }
         }
 
-        levelManager.draw(g, xLvlOffset);
-        player.render(g, xLvlOffset);
-        enemyManager.draw(g, xLvlOffset);
+        levelManager.draw(g, xLvlOffset, yLvlOffset);
+        player.render(g, xLvlOffset, yLvlOffset);
+        enemyManager.draw(g, xLvlOffset, yLvlOffset);
 
         if (paused) {
             g.setColor(new Color(0, 0, 0, 150));
@@ -133,8 +181,6 @@ public class Playing extends State implements Statemethods {
         } else if (isSuccess) {
             success.draw(g);
         }
-
-        success.draw(g);
     }
 
     @Override
@@ -187,6 +233,9 @@ public class Playing extends State implements Statemethods {
             gameOver.KeyPressed(e);
         } else {
             switch (e.getKeyCode()) {
+                case KeyEvent.VK_SHIFT:
+                    player.updateRun(true);
+                    break;
                 case KeyEvent.VK_D:
                     player.setRight(true);
                     break;
@@ -208,6 +257,9 @@ public class Playing extends State implements Statemethods {
     public void keyReleased(KeyEvent e) {
         if (!isGameOver) {
             switch (e.getKeyCode()) {
+                case KeyEvent.VK_SHIFT:
+                    player.updateRun(false);
+                    break;
                 case KeyEvent.VK_D:
                     player.setRight(false);
                     break;
@@ -233,6 +285,7 @@ public class Playing extends State implements Statemethods {
 
     public void resetAll() {
         isGameOver = false;
+        isSuccess = false;
         paused = false;
         player.resetAll();
         enemyManager.resetAll();

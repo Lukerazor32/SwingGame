@@ -5,8 +5,14 @@ import entities.Entity;
 import entities.Synthetron;
 import main.GameThread;
 
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import static utilz.Constants.EnemyConstants.SYNTHETRON;
+import static utilz.LoadSave.LEVEL_ONE;
+import static utilz.LoadSave.getAtlas;
 
 public class HelpMethods {
 
@@ -29,7 +35,8 @@ public class HelpMethods {
 
     private static boolean IsObject(float x, float y, int[][] lvlData) {
         int maxWidth = lvlData[0].length * GameThread.TILES_SIZE;
-        if ((x < 0 || x >= maxWidth) || (y < 0 || y >= GameThread.GAME_HEIGHT)) {
+        int maxHeight = lvlData.length * GameThread.TILES_SIZE;
+        if ((x < 0 || x >= maxWidth) || (y < 0 || y >= maxHeight)) {
             return true;
         }
 
@@ -110,5 +117,45 @@ public class HelpMethods {
         } else {
             return isAllTilesWalkable(enemyXTile, playerXTile, yTile, lvlData);
         }
+    }
+
+    public static int[][] getLevelData(BufferedImage img) {
+        int[][] lvlData = new int[img.getHeight()][img.getWidth()];
+
+        for (int j = 0; j < img.getHeight(); j++) {
+            for (int i = 0; i < img.getWidth(); i++) {
+                Color color = new Color(img.getRGB(i, j));
+                int value = color.getRed();
+                lvlData[j][i] = value;
+            }
+        }
+        return lvlData;
+    }
+
+    public static ArrayList<Synthetron> getSynths(BufferedImage img) {
+        ArrayList<Synthetron> synths = new ArrayList<>();
+        for (int j = 0; j < img.getHeight(); j++) {
+            for (int i = 0; i < img.getWidth(); i++) {
+                Color color = new Color(img.getRGB(i, j));
+                int value = color.getGreen();
+                if (value == SYNTHETRON) {
+                    synths.add(new Synthetron(i * GameThread.TILES_SIZE, j * GameThread.TILES_SIZE));
+                }
+            }
+        }
+        return synths;
+    }
+
+    public static Point getPlayerSpawn(BufferedImage img) {
+        for (int j = 0; j < img.getHeight(); j++) {
+            for (int i = 0; i < img.getWidth(); i++) {
+                Color color = new Color(img.getRGB(i, j));
+                int value = color.getGreen();
+                if (value == 100) {
+                    return new Point(i * GameThread.TILES_SIZE, j * GameThread.TILES_SIZE);
+                }
+            }
+        }
+        return new Point(1 * GameThread.TILES_SIZE, 1 * GameThread.TILES_SIZE);
     }
 }

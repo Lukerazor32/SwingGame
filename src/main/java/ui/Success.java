@@ -29,13 +29,13 @@ public class Success {
         bgW = (int) (background.getWidth() * GameThread.SCALE);
         bgH = (int) (background.getHeight() * GameThread.SCALE);
         bgX = GameThread.GAME_WIDTH / 2 - bgW / 2;
-        bgY = (int) (100 * GameThread.SCALE);
+        bgY = GameThread.GAME_HEIGHT / 2 - bgH / 2;
     }
 
     private void createUrmButtons() {
-        int menuX = (int) (494 * GameThread.SCALE);
-        int unpauseX = (int) (690 * GameThread.SCALE);
-        int bY = (int) (450 * GameThread.SCALE);
+        int menuX = (int) ((35f / 100f) * GameThread.GAME_WIDTH);
+        int unpauseX = (int) ((55f / 100f) * GameThread.GAME_WIDTH);
+        int bY = (int) ((70f / 100f) * (float) bgH);
 
         menuB = new UrmButton(menuX, bY, URM_SIZE, URM_SIZE, 2);
         unpauseB = new UrmButton(unpauseX, bY, URM_SIZE, URM_SIZE, 0);
@@ -72,11 +72,12 @@ public class Success {
     public void mouseReleased(MouseEvent e) {
         if (hover(e, menuB)) {
             if (menuB.isMousePressed()) {
+                playing.resetAll();
                 GameState.state = GameState.MENU;
             }
         } else if (hover(e, unpauseB)) {
             if (unpauseB.isMousePressed()) {
-                playing.unpauseGame();
+                playing.loadNextLevel();
             }
         }
 

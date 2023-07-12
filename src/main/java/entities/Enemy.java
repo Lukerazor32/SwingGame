@@ -8,47 +8,43 @@ import utilz.HelpMethods;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
+import static utilz.Constants.ANIMATIONSPEED;
 import static utilz.Constants.Directions.*;
 import static utilz.Constants.EnemyConstants.*;
+import static utilz.Constants.GRAVITY;
+import static utilz.Constants.PlayerState.WAIT;
 import static utilz.HelpMethods.*;
 
 public abstract class Enemy extends Entity {
     @Getter
-    protected int animationIndex, enemyState;
     protected int enemyType;
-    protected int animationTick, animationSpeed = 10;
     protected boolean firstUpdate = true;
-    protected boolean inAir;
-    protected float fallSpeed;
-    protected float gravity = 0.04f * GameThread.SCALE;
-    protected float enemySpeed = 0.7f * GameThread.SCALE;
     protected int walkDir = LEFT;
     protected int tileY;
 
-    protected int maxHealth;
-    protected int healthIndicator;
     @Getter
     protected boolean active = true;
 
     public Enemy(float x, float y, int width, int height, int enemyType) {
         super(x, y, width, height);
         this.enemyType = enemyType;
-        initHitBox(x, y, width, height);
+        speed = 0.7f * GameThread.SCALE;
         maxHealth = Constants.EnemyConstants.getMaxHealth(enemyType);
         healthIndicator = maxHealth;
+        this.state = WAIT;
     }
 
     protected void updateAnimationTick() {
         animationTick++;
-        if (animationTick >= animationSpeed) {
+        if (animationTick >= ANIMATIONSPEED) {
             animationTick = 0;
             animationIndex++;
-            if (animationIndex >= getSpriteAmount(enemyType, enemyState)) {
+            if (animationIndex >= getSpriteAmount(enemyType, state)) {
                 animationIndex = 0;
-                switch (enemyState) {
+                switch (state) {
                     case ATTACK:
                     case HIT:
-                        enemyState = WAIT;
+                        state = WAIT;
                         break;
                     case DEAD:
                         active = false;
@@ -67,13 +63,13 @@ public abstract class Enemy extends Entity {
     }
 
     protected void inAirUpdate(int[][] lvlData) {
-        if (CanMove(hitBox.x, hitBox.y + fallSpeed, hitBox.width, hitBox.height, lvlData)) {
-            hitBox.y += fallSpeed;
-            fallSpeed += gravity;
+        if (CanMove(hitBox.x, hitBox.y + airSpeed, hitBox.width, hitBox.height, lvlData)) {
+            hitBox.y += airSpeed;
+            airSpeed += GRAVITY;
         }
         else {
             inAir = false;
-            hitBox.y = YPosCheck(hitBox, fallSpeed);
+            hitBox.y = YPosCheck(hitBox, airSpeed);
             tileY = (int) (hitBox.y / GameThread.TILES_SIZE);
         }
     }
@@ -84,7 +80,7 @@ public abstract class Enemy extends Entity {
         if (walkDir == LEFT) {
             flipX = (int) width;
             flipW = -1;
-            xSpeed = -enemySpeed;
+            xSpeed = -speed;
             if (CanMove(hitBox.x + xSpeed, hitBox.y, hitBox.width, hitBox.height, lvlData)) {
                 if (IsFloorLeft(hitBox, xSpeed, lvlData)) {
                     hitBox.x += xSpeed;
@@ -94,7 +90,7 @@ public abstract class Enemy extends Entity {
         } else {
             flipX = 0;
             flipW = 1;
-            xSpeed = enemySpeed;
+            xSpeed = speed;
             if (CanMove(hitBox.x + xSpeed, hitBox.y, hitBox.width, hitBox.height, lvlData)) {
                 if (IsFloorRight(hitBox, xSpeed, lvlData)) {
                     hitBox.x += xSpeed;
@@ -148,7 +144,7 @@ public abstract class Enemy extends Entity {
     }
 
     protected void newState(int enemyState) {
-        this.enemyState = enemyState;
+        this.state = enemyState;
         animationIndex = 0;
         animationTick = 0;
     }
@@ -177,6 +173,6 @@ public abstract class Enemy extends Entity {
         firstUpdate = true;
         newState(WAIT);
         active = true;
-        fallSpeed = 0;
+        airSpeed = 0;
     }
 }

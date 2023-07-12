@@ -25,10 +25,10 @@ public class PauseOverlay {
     }
 
     private void createUrmButtons() {
-        int menuX = (int) (444 * GameThread.SCALE);
-        int replayX = (int) (592 * GameThread.SCALE);
-        int unpauseX = (int) (740 * GameThread.SCALE);
-        int bY = (int) (580 * GameThread.SCALE);
+        int menuX = (int) ((30f / 100f) * (float) GameThread.GAME_WIDTH);
+        int replayX = (int) ((45f / 100f) * (float) GameThread.GAME_WIDTH);
+        int unpauseX = (int) ((60f / 100f) * (float) GameThread.GAME_WIDTH);
+        int bY = (int) ((70f / 100f) * (float) bgH);
 
         menuB = new UrmButton(menuX, bY, URM_SIZE, URM_SIZE, 2);
         replayB = new UrmButton(replayX, bY, URM_SIZE, URM_SIZE, 1);
@@ -37,10 +37,10 @@ public class PauseOverlay {
 
     private void loadImgs() {
         background = LoadSave.getAtlas(LoadSave.PAUSE_BACKGROUND);
-        bgW = (int) (background.getWidth() * GameThread.SCALE);
-        bgH = (int) (background.getHeight() * GameThread.SCALE);
+        bgW = (int) ((50f / 100f) * (float) GameThread.GAME_WIDTH);
+        bgH = (int) ((95f / 100f) * (float) GameThread.GAME_HEIGHT);;
         bgX = GameThread.GAME_WIDTH / 2 - bgW / 2;
-        bgY = (int) (15 * GameThread.SCALE);
+        bgY = GameThread.GAME_HEIGHT / 2 - bgH / 2;
     }
 
     public void update() {
