@@ -1,5 +1,6 @@
 package levels;
 
+import entities.Experience;
 import entities.Synthetron;
 import lombok.Getter;
 import main.GameThread;
@@ -14,6 +15,7 @@ public class Level {
     private BufferedImage img;
     @Getter
     private ArrayList<Synthetron> synths;
+    private ArrayList<Experience> experiences;
     @Getter
     private int[][] lvlData;
     private int lvlTilesWide;

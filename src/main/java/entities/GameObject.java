@@ -1,5 +1,7 @@
 package entities;
 
+import lombok.Getter;
+import lombok.Setter;
 import main.GameThread;
 import utilz.LoadSave;
 
@@ -11,19 +13,23 @@ import static utilz.Constants.ANIMATIONSPEED;
 import static utilz.Constants.ObjectConstants.*;
 
 public class GameObject {
-    protected int x, y, width, height, objType;
+    @Getter
+    protected int x, y, objType;
+    @Getter
     protected Rectangle2D.Float hitBox;
+    @Getter
+    @Setter
     protected boolean doAnimation, active = true;
+    @Getter
     protected int animationTick, animationIndex;
+    @Getter
     protected int xDrawOffset, yDrawOffset;
 
     protected BufferedImage image;
 
-    public GameObject(int x, int y, int width, int height, int objType) {
+    public GameObject(int x, int y, int objType) {
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
         this.objType = objType;
     }
 
@@ -40,7 +46,11 @@ public class GameObject {
         g.drawRect((int) hitBox.getX() - xLvlOffset, (int) hitBox.getY() - yLvlOffset, (int) hitBox.getWidth(), (int) hitBox.getHeight());
     }
 
-    private void playAnimation() {
+    public void update() {
+        playAnimation();
+    }
+
+    protected void playAnimation() {
         animationTick++;
         if (animationTick >= ANIMATIONSPEED) {
             animationTick = 0;

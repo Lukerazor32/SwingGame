@@ -87,11 +87,20 @@ public class Player extends Entity {
         }
         updateAttackBox();
         updatePosition();
+
+        if (isWalk) {
+            checkObjectTouched();
+        }
+
         if (attack) {
             checkAttack();
         }
         setAnimation();
         playAnimation();
+    }
+
+    private void checkObjectTouched() {
+        playing.getObjectManager().isObjectTouched(hitBox);
     }
 
     private void checkAttack() {

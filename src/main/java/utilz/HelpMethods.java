@@ -1,8 +1,6 @@
 package utilz;
 
-import entities.EnemyManager;
-import entities.Entity;
-import entities.Synthetron;
+import entities.*;
 import main.GameThread;
 
 import java.awt.*;
@@ -157,5 +155,9 @@ public class HelpMethods {
             }
         }
         return new Point(1 * GameThread.TILES_SIZE, 1 * GameThread.TILES_SIZE);
+    }
+
+    public static Health getHealth(int x, int y) {
+        return new Health(x, y, Constants.ObjectConstants.HEALTH_INDEX);
     }
 }

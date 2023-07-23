@@ -43,6 +43,7 @@ public class LevelManager {
         gameThread.getPlaying().getPlayer().loadLvlData(newLevel.getLvlData());
         gameThread.getPlaying().setMaxLvlOffsetX(newLevel.getMaxLvlOffsetX());
         gameThread.getPlaying().setMaxLvlOffsetY(newLevel.getMaxLvlOffsetY());
+        gameThread.getPlaying().getObjectManager().resetAll();
     }
 
     private void importSprites() {

@@ -45,11 +45,11 @@ public class EnemyManager {
         drawSynths(g, xLevelOffset, yLvlOffset);
     }
 
-    public void checkEnemyHit(Rectangle2D.Float attackBox) {
+    public void checkEnemyHit(Rectangle2D.Float attackBox, ObjectManager objectManager) {
         for(Synthetron synth : synths) {
             if (synth.active) {
                 if (attackBox.intersects(synth.getHitBox())) {
-                    synth.hit(10);
+                    synth.hit(10, objectManager);
                     return;
                 }
             }

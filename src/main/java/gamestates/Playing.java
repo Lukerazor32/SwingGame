@@ -1,6 +1,7 @@
 package gamestates;
 
 import entities.EnemyManager;
+import entities.ObjectManager;
 import entities.Player;
 import levels.LevelManager;
 import lombok.Getter;
@@ -28,6 +29,8 @@ public class Playing extends State implements Statemethods {
     private LevelManager levelManager;
     @Getter
     private EnemyManager enemyManager;
+    @Getter
+    private ObjectManager objectManager;
     private PauseOverlay pauseOverlay;
     private Success success;
     private boolean paused;
@@ -83,6 +86,7 @@ public class Playing extends State implements Statemethods {
     private void initClasses() {
         levelManager = new LevelManager(gameThread);
         enemyManager = new EnemyManager(this);
+        objectManager = new ObjectManager(this);
         player = new Player(200, 100, (int) (64 * SCALE), (int) (64 * SCALE), this);
         player.loadLvlData(levelManager.getCurrentLevel().getLvlData());
         player.setSpawn(levelManager.getCurrentLevel().getPlayerSpawn());
@@ -112,6 +116,7 @@ public class Playing extends State implements Statemethods {
             success.update();
         } else if (!isGameOver) {
             levelManager.update();
+            objectManager.update();
             player.update();
             enemyManager.update(levelManager.getCurrentLevel().getLvlData(), player);
             closeToBorder();
@@ -171,6 +176,7 @@ public class Playing extends State implements Statemethods {
         levelManager.draw(g, xLvlOffset, yLvlOffset);
         player.render(g, xLvlOffset, yLvlOffset);
         enemyManager.draw(g, xLvlOffset, yLvlOffset);
+        objectManager.draw(g, xLvlOffset, yLvlOffset);
 
         if (paused) {
             g.setColor(new Color(0, 0, 0, 150));
@@ -292,6 +298,6 @@ public class Playing extends State implements Statemethods {
     }
 
     public void checkEnemyHit(Rectangle2D.Float attackBox) {
-        enemyManager.checkEnemyHit(attackBox);
+        enemyManager.checkEnemyHit(attackBox, objectManager);
     }
 }

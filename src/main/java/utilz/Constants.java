@@ -70,15 +70,15 @@ public class Constants {
     }
 
     public static class ObjectConstants {
-        public static final int EXP_VALUE = 0;
+        public static final int EXP_INDEX = 0;
+        public static final int HEALTH_INDEX = 1;
+        public static final int HEALTH_VALUE = 10;
 
-        public static final int EXP_WIDTH = (int) (GameThread.SCALE * 64);
-        public static final int EXP_HEIGHT = (int) (GameThread.SCALE * 64);
+        public static final int OBJECT_WIDTH = (int) (GameThread.SCALE * 32);
+        public static final int OBJECT_HEIGHT = (int) (GameThread.SCALE * 32);
 
         public static int getSpriteAmount(int objType) {
             switch (objType) {
-                case EXP_VALUE:
-                    return 6;
                 default:
                     return 6;
             }
@@ -129,7 +129,7 @@ public class Constants {
         public static int getSpriteWidth(int action) {
             switch (action) {
                 case WAIT:
-                    return 5;
+                    return 4;
                 case WALK:
                     return 4;
                 case RUN:

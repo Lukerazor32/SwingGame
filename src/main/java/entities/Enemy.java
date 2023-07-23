@@ -157,10 +157,11 @@ public abstract class Enemy extends Entity {
         }
     }
 
-    protected void hit(int amount) {
+    protected void hit(int amount, ObjectManager objectManager) {
         healthIndicator -= amount;
         if (healthIndicator <= 0) {
             newState(DEAD);
+            objectManager.getHealths().add(HelpMethods.getHealth((int) hitBox.x, (int) hitBox.y));
         } else {
             newState(HIT);
         }
